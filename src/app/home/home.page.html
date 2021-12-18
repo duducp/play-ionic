@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Play Nas Férias
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,12 +9,42 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">Play Nas Férias</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-searchbar #search animated debounce="700" placeholder="Pesquisar Nome ou CPF" [disabled]="authorization === null" (ionClear)="_ionSearchClear()" (ionChange)="_ionSearch($event)"></ion-searchbar>
+
+  <ion-list>
+    <ion-card *ngFor="let item of searchedItem">
+      <ion-card-header>
+        <ion-card-title>{{ _getFirstAndLastName(item.name) }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <b>Número:</b> {{ item.id }} <br>
+        <b>Nome:</b> {{ item.name }} <br>
+        <b>CPF:</b> {{ item.cpf | cpf }} <br><br>
+        <b>Promotor:</b> {{ item.promoter }} <br>
+        <b>Observação:</b> {{ item.note }}
+      </ion-card-content>
+
+      <ion-item>
+        <ion-badge slot="start" color="warning" *ngIf="!item.validated">PENDENTE</ion-badge>
+        <ion-badge slot="start" color="success" *ngIf="item.validated">VALIDADO</ion-badge>
+
+        <ion-button fill="outline" slot="end" [disabled]="item.validated" (click)="_validateTicket(item)">Validar</ion-button>
+      </ion-item>
+    </ion-card>
+  </ion-list>
+
 </ion-content>
+
+<ion-footer collapse="fade">
+  <ion-toolbar>
+    <ion-title size="small" slot="start" [hidden]="authorization === null">Usuário: {{ username }}</ion-title>
+    <ion-button fill="outline" slot="end" color="danger" [hidden]="authorization === null" (click)="_logout()">Sair</ion-button>
+
+    <ion-button color="dark" expand="block" [hidden]="authorization !== null" (click)="_modalLogin()">Autenticar</ion-button>
+  </ion-toolbar>
+</ion-footer>
